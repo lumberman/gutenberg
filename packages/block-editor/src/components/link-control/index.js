@@ -143,6 +143,28 @@ function LinkControl( {
 		return ( maybeURL ) ? handleDirectEntry( val, args ) : handleEntitySearch( val, args );
 	}, [ handleDirectEntry, fetchSearchSuggestions ] );
 
+	const handleOnCreate = async () => {
+		let newEntity;
+
+		setIsResolvingLink( true );
+		setErrorMsg( null );
+
+		try {
+			newEntity = await createEntity( 'page', inputValue );
+		} catch ( error ) {
+			setErrorMsg( error.msg || __( 'An unknown error occurred during Page creation. Please try again.' ) );
+		}
+
+		setIsResolvingLink( false );
+
+		if ( newEntity ) { // only set if request is resolved
+			onChange( newEntity );
+			setIsEditingLink( false );
+		} else {
+			setIsEditingLink( true );
+		}
+	};
+
 	// Render Components
 	const renderSearchResults = ( { suggestionsListProps, buildSuggestionItemProps, suggestions, selectedSuggestion, isLoading, isInitialSuggestions } ) => {
 		const resultsListClasses = classnames( 'block-editor-link-control__search-results', {
@@ -175,27 +197,7 @@ function LinkControl( {
 							return (
 								<LinkControlSearchCreate
 									searchTerm={ inputValue }
-									onClick={ async () => {
-										setIsResolvingLink( true );
-										setErrorMsg( null );
-
-										let newEntity;
-
-										try {
-											newEntity = await createEntity( 'page', inputValue );
-										} catch ( error ) {
-											setErrorMsg( error.msg || __( 'An unknown error occurred during Page creation. Please try again.' ) );
-										}
-
-										setIsResolvingLink( false );
-
-										if ( newEntity ) { // only set if request is resolved
-											onChange( newEntity );
-											setIsEditingLink( false );
-										} else {
-											setIsEditingLink( true );
-										}
-									} }
+									onClick={ handleOnCreate }
 									key={ `${ suggestion.id }-${ suggestion.type }` }
 									itemProps={ buildSuggestionItemProps( suggestion, index ) }
 									isSelected={ index === selectedSuggestion }
