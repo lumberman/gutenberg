@@ -165,6 +165,11 @@ function LinkControl( {
 		}
 	};
 
+	const handleSelectSuggestion = ( suggestion, _value = {} ) => () => {
+		setIsEditingLink( false );
+		onChange( { ..._value, ...suggestion } );
+	};
+
 	// Render Components
 	const renderSearchResults = ( { suggestionsListProps, buildSuggestionItemProps, suggestions, selectedSuggestion, isLoading, isInitialSuggestions } ) => {
 		const resultsListClasses = classnames( 'block-editor-link-control__search-results', {
@@ -216,10 +221,7 @@ function LinkControl( {
 								key={ `${ suggestion.id }-${ suggestion.type }` }
 								itemProps={ buildSuggestionItemProps( suggestion, index ) }
 								suggestion={ suggestion }
-								onClick={ () => {
-									setIsEditingLink( false );
-									onChange( { ...value, ...suggestion } );
-								} }
+								onClick={ handleSelectSuggestion( suggestion, value ) }
 								isSelected={ index === selectedSuggestion }
 								isURL={ directLinkEntryTypes.includes( suggestion.type.toLowerCase() ) }
 								searchTerm={ inputValue }
@@ -300,8 +302,7 @@ function LinkControl( {
 					value={ inputValue }
 					onChange={ onInputChange }
 					onSelect={ ( suggestion ) => {
-						setIsEditingLink( false );
-						onChange( { ...value, ...suggestion } );
+						handleSelectSuggestion( suggestion, value )();
 					} }
 					renderSuggestions={ renderSearchResults }
 					fetchSuggestions={ getSearchHandler }
