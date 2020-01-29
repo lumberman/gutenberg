@@ -143,11 +143,6 @@ function LinkControl( {
 		return ( maybeURL ) ? handleDirectEntry( val, args ) : handleEntitySearch( val, args );
 	}, [ handleDirectEntry, fetchSearchSuggestions ] );
 
-	const forceUpdateInputValue = ( val ) => {
-		setInputValue( '' );
-		setInputValue( val );
-	};
-
 	// Render Components
 	const renderSearchResults = ( { suggestionsListProps, buildSuggestionItemProps, suggestions, selectedSuggestion, isLoading, isInitialSuggestions } ) => {
 		const resultsListClasses = classnames( 'block-editor-link-control__search-results', {
@@ -199,7 +194,6 @@ function LinkControl( {
 											setIsEditingLink( false );
 										} else {
 											setIsEditingLink( true );
-											forceUpdateInputValue( inputValue );
 										}
 									} }
 									key={ `${ suggestion.id }-${ suggestion.type }` }
